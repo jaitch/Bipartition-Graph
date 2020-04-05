@@ -8,27 +8,27 @@ def possible_bipartition(dislikes)
   dislikes.length.times do
     color_array << 0
   end
-
+  
   dislikes.each_with_index { |enemies, dog|
     graph_queue << dog
-    (graph_queue << enemies).flatten!
   }
-
+  
   while !graph_queue.empty?
     current = graph_queue.shift
     if !searched.include?(current)
       color_array[current] = 1
       searched << current
-
+      
       dislikes[current].each do |enemy|
         if color_array[enemy] == color_array[current]
           return false
         elsif color_array[enemy] == 0
           color_array[enemy] = -(color_array[current])
           searched << enemy
+          graph_queue << enemy
         end
       end
-
+      
     elsif searched.include?(current)
       dislikes[current].each do |enemy|
         if color_array[enemy] == color_array[current]
@@ -36,6 +36,7 @@ def possible_bipartition(dislikes)
         elsif color_array[enemy] == 0
           color_array[enemy] = -(color_array[current])
           searched << enemy
+          graph_queue << enemy
         end
       end
     end
