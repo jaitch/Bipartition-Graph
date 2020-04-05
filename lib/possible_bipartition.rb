@@ -1,41 +1,44 @@
 
 def possible_bipartition(dislikes)
+  return true if dislikes.empty?
   graph_queue = []
-  dislikes.each do |dog|
-    (graph_queue << dog).flatten!
-  end
   searched = []
+  
+  color_array = []
+  dislikes.length.times do
+    color_array << 0
+  end
+
+  dislikes.each_with_index { |enemies, dog|
+    graph_queue << dog
+    (graph_queue << enemies).flatten!
+  }
+
   while !graph_queue.empty?
+    current = graph_queue.shift
+    if !searched.include?(current)
+      color_array[current] = 1
+      searched << current
 
-  print graph_queue
+      dislikes[current].each do |enemy|
+        if color_array[enemy] == color_array[current]
+          return false
+        elsif color_array[enemy] == 0
+          color_array[enemy] = -(color_array[current])
+          searched << enemy
+        end
+      end
+
+    elsif searched.include?(current)
+      dislikes[current].each do |enemy|
+        if color_array[enemy] == color_array[current]
+          return false
+        elsif color_array[enemy] == 0
+          color_array[enemy] = -(color_array[current])
+          searched << enemy
+        end
+      end
+    end
+  end
+  return true
 end
-
-def conflicting?()
-end
-
-#   first_group = []
-#   second_group = []
-
-#   dislikes.each_with_index {|enemies, dog|
-#     if !first_group.include?(dog) && !second_group.include?(enemies)
-#       first_group << dog
-#       (second_group << enemies).flatten!
-#     elsif !first_group.include?(enemies) && !second_group.include?(dog)
-#       first_group << enemies
-#       (second_group << dog).flatten!
-#     else
-#       return false
-#     end
-#     puts "group1: #{first_group}; group2: #{second_group}"
-#   }
-#   return true
-# end
-
-possible_bipartition(dislikes = [ [3, 6],
-  [2, 5],
-  [1, 3],
-  [0, 2],
-  [5],
-  [1, 4],
-  [0]
-  ])
